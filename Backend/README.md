@@ -129,7 +129,7 @@ Send as `application/json`:
 #### Success (200 OK)
 ```
 {
-  "message": "Login successful",
+  "token": "<jwt_token>",
   "user": {
     "_id": "665f1c2e2b1e4a001e8e4b1a",
     "fullName": { "firstName": "John", "lastName": "Doe" },
@@ -137,15 +137,14 @@ Send as `application/json`:
     "createdAt": "2024-06-01T12:34:56.789Z",
     "updatedAt": "2024-06-01T12:34:56.789Z",
     "socketId": null
-  },
-  "token": "<jwt_token>"
+  }
 }
 ```
 
 ##### Example Response
 ```
 {
-  "message": "Login successful",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjVmMWMyZTJiMWU0YTAwMWU4ZTRiMWEiLCJpYXQiOjE3MTcyMzg5OTYsImV4cCI6MTcxNzI0MjU5Nn0.abc123def456ghi789jkl",
   "user": {
     "_id": "665f1c2e2b1e4a001e8e4b1a",
     "fullName": {
@@ -156,8 +155,7 @@ Send as `application/json`:
     "createdAt": "2024-06-01T12:34:56.789Z",
     "updatedAt": "2024-06-01T12:34:56.789Z",
     "socketId": null
-  },
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjVmMWMyZTJiMWU0YTAwMWU4ZTRiMWEiLCJpYXQiOjE3MTcyMzg5OTYsImV4cCI6MTcxNzI0MjU5Nn0.abc123def456ghi789jkl"
+  }
 }
 ```
 
@@ -193,4 +191,103 @@ curl -X POST http://localhost:3000/users/login \
 
 ### Notes
 - Both fields are required.
-- On success, a JWT token is returned for authentication. 
+- On success, a JWT token is returned for authentication.
+
+
+# User Profile API Documentation
+
+## Endpoint: `GET /users/profile`
+
+### Description
+Returns the authenticated user's profile information. Requires a valid JWT token in the request.
+
+---
+
+### Authentication
+- **Required**: Yes (JWT in `Authorization` header as `Bearer <token>` or in `token` cookie)
+
+---
+
+### Request Example
+```
+GET /users/profile
+Authorization: Bearer <jwt_token>
+```
+
+---
+
+### Success Response (200 OK)
+```
+{
+  "_id": "665f1c2e2b1e4a001e8e4b1a",
+  "fullName": { "firstName": "John", "lastName": "Doe" },
+  "emailAddress": "john.doe@example.com",
+  "createdAt": "2024-06-01T12:34:56.789Z",
+  "updatedAt": "2024-06-01T12:34:56.789Z",
+  "socketId": null
+}
+```
+
+#### Example cURL
+```
+curl -X GET http://localhost:3000/users/profile \
+  -H "Authorization: Bearer <jwt_token>"
+```
+
+---
+
+### Error Responses
+- **401 Unauthorized**: If token is missing or invalid
+
+```
+{
+  "message": "Unauthorized"
+}
+```
+
+
+# User Logout API Documentation
+
+## Endpoint: `GET /users/logout`
+
+### Description
+Logs out the authenticated user by blacklisting the JWT token and clearing the authentication cookie. Requires a valid JWT token.
+
+---
+
+### Authentication
+- **Required**: Yes (JWT in `Authorization` header as `Bearer <token>` or in `token` cookie)
+
+---
+
+### Request Example
+```
+GET /users/logout
+Authorization: Bearer <jwt_token>
+```
+
+---
+
+### Success Response (200 OK)
+```
+{
+  "message": "Logged out successfully"
+}
+```
+
+#### Example cURL
+```
+curl -X GET http://localhost:3000/users/logout \
+  -H "Authorization: Bearer <jwt_token>"
+```
+
+---
+
+### Error Responses
+- **401 Unauthorized**: If token is missing or invalid
+
+```
+{
+  "message": "Unauthorized"
+}
+``` 
