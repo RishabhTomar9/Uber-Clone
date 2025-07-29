@@ -5,6 +5,7 @@ const cors = require('cors');
 const app = express();
 const connectDB = require('./db/db');
 const cookieParser = require('cookie-parser');
+const { authCaption } = require('./middlewares/auth.middlewares');
 
 // routes
 const userRoutes = require('./routes/user.route');
@@ -14,6 +15,7 @@ connectDB();
 
 app.use(cors());
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 

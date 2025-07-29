@@ -6,16 +6,23 @@ module.exports.createUser = async ({
     emailAddress,
     password,
 }) => {
-    if (!firstName || !lastName || !emailAddress || !password) {
-        throw new Error('All fields are required');
+    try {
+        if (!firstName || !lastName || !emailAddress || !password) {
+            throw new Error('All fields are required');
+        }
+        
+        const user = await userModel.create({
+            fullName: {
+                firstName,
+                lastName,
+            },
+            emailAddress,
+            password,
+        });
+        
+        return user;
+    } catch (error) {
+        console.error('User creation error:', error);
+        throw error;
     }
-    const user = userModel.create({
-        fullName: {
-            firstName,
-            lastName,
-        },
-        emailAddress,
-        password,
-    });
-    return user;
 };

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
 const captionController = require('../controllers/caption.controllers');
+const { authCaption } = require('../middlewares/auth.middlewares');
 
 
 router.post('/register', [
@@ -17,7 +18,13 @@ router.post('/register', [
     body('location.lng').isFloat({ min: -180, max: 180 }).withMessage('Longitude must be between -180 and 180'),
 ], captionController.registerCaption);
 
+router.post('/login',[
+    body('email').isEmail().withMessage('Invalid email address'),
+    body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
+], captionController.loginCaption);
 
+router.get('/profile', authCaption, captionController.getCaptionProfile);
 
+router.get('/logout', authCaption, captionController.logoutCaption);
 
 module.exports = router;
