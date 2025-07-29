@@ -4,8 +4,11 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const connectDB = require('./db/db');
-const userRoutes = require('./routes/user.route');
 const cookieParser = require('cookie-parser');
+
+// routes
+const userRoutes = require('./routes/user.route');
+const captionRoutes = require('./routes/caption.routes');
 
 connectDB();
 
@@ -19,6 +22,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/users', userRoutes);
+app.use('/captions', captionRoutes);
 
 
 module.exports = app;
