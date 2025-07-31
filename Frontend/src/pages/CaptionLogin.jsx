@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import { FiEye, FiEyeOff } from 'react-icons/fi'
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 function CaptionLogin() {
 
@@ -8,15 +10,17 @@ function CaptionLogin() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false)
   const [captionData, setCaptionData] = useState({email: '', password: ''});
+  const {user, setUser} = useContext(UserContext);
   const handleSubmit = (e) => {
     e.preventDefault();
    setEmail('');
    setPassword('');
    setCaptionData({email:email, password:password});
+   setUser({email:email, password:password});
   }
 
   return (
-    <div className='min-h-screen bg-gray-50 flex flex-col bg-[url("https://res.cloudinary.com/dvkzdok8c/image/upload/v1753988750/photo-1593950315186-76a92975b60c_ju8wyi.jpg")] bg-cover'>
+    <div className='min-h-screen bg-gray-50 flex flex-col bg-[url("https://res.cloudinary.com/dvkzdok8c/image/upload/v1753988750/photo-1593950315186-76a92975b60c_ju8wyi.jpg")] bg-cover bg-center'>
       {/* Header with Logo */}
       <div className='flex-1 h-screen flex flex-col justify-center items-center px-6 py-8'>
         <div className='mb-8 flex flex-col items-center gap-2 text-white'>
@@ -30,7 +34,7 @@ function CaptionLogin() {
 
         {/* Login Form Card */}
         <div className='w-full max-w-md'>
-          <div className='bg-transparent border border-white bg-opacity-20 backdrop-blur-lg rounded-2xl shadow-lg p-8'>
+          <div className='bg-transparent border border-white bg-opacity-20 backdrop-blur-[3px] rounded-xl shadow-lg p-8'>
             <h2 className='text-2xl font-bold text-center mb-8 text-white'>
               Sign In
             </h2>
@@ -46,7 +50,7 @@ function CaptionLogin() {
                   type="email" 
                   placeholder='example@gmail.com' 
                   required 
-                  className='w-full bg-gray-50 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500'
+                  className='w-full bg-gray-50 px-4 py-3 border border-gray-300 rounded-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -62,7 +66,7 @@ function CaptionLogin() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
                   required
-                  className="w-full bg-gray-50 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500 pr-12"
+                  className="w-full bg-gray-50 px-4 py-3 border border-gray-300 rounded-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500 pr-12"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -84,7 +88,7 @@ function CaptionLogin() {
               {/* Submit Button */}
               <button 
                 type='submit'
-                className='group w-full bg-black text-white py-4 px-6 rounded-xl font-semibold text-lg hover:bg-gray-800 active:bg-gray-900 transition-all duration-200 shadow-lg relative overflow-hidden'
+                className='group w-full bg-black text-white py-4 px-6 rounded-sm font-semibold text-lg hover:bg-gray-800 active:bg-gray-900 transition-all duration-200 shadow-lg relative overflow-hidden'
               >
                 <span className='flex items-center justify-center gap-3'>
                   Sign In
@@ -106,17 +110,17 @@ function CaptionLogin() {
             </form>
 
             {/* Sign Up Link */}
-            <div className='mt-6 text-center'>
+            <div className='mt-6 text-center bg-[#878580] rounded-sm p-2 backdrop-blur-[3px]'>
               <p className='text-white'>
                 Join as a Caption?  {' '}
-                <a href='/caption-signup' className='text-white hover:text-black font-bold transition-colors duration-200'>
+                <a href='/caption-signup' className='text-black hover:text-black font-bold transition-colors duration-200 '>
                   Sign up now
                 </a>
               </p>
             </div>
           </div>
         </div>
-      <Link to='/login' className='group w-full bg-white text-black py-4 px-6 rounded-xl font-semibold text-lg relative overflow-hidden mt-15'>
+        <Link to='/login' className='group w-full bg-white text-black py-4 px-6 rounded-sm font-semibold text-lg relative overflow-hidden mt-15'>
         <span className='flex items-center justify-center gap-3'>
           Login as User
           <svg 

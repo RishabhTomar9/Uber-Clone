@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import { FiEye, FiEyeOff } from 'react-icons/fi'
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 function UserLogin() {
 
@@ -8,11 +10,13 @@ function UserLogin() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [userData, setUserData] = useState({email: '', password: ''});
+  const {user, setUser} = useContext(UserContext);
   const handleSubmit = (e) => {
     e.preventDefault();
    setEmail('');
    setPassword('');
    setUserData({email:email, password:password});
+   setUser({email:email, password:password});
   }
 
   return (
@@ -45,7 +49,7 @@ function UserLogin() {
                   type="email" 
                   placeholder='example@gmail.com' 
                   required 
-                  className='w-full bg-gray-50 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500'
+                  className='w-full bg-gray-50 px-4 py-3 border border-gray-300 rounded-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -61,7 +65,7 @@ function UserLogin() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
                   required
-                  className="w-full bg-gray-50 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500 pr-12"
+                  className="w-full bg-gray-50 px-4 py-3 border border-gray-300 rounded-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500 pr-12"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -84,7 +88,7 @@ function UserLogin() {
               {/* Submit Button */}
               <button 
                 type='submit'
-                className='group w-full bg-black text-white py-4 px-6 rounded-xl font-semibold text-lg hover:bg-gray-800 active:bg-gray-900 transition-all duration-200 shadow-lg relative overflow-hidden'
+                className='group w-full bg-black text-white py-4 px-6 rounded-sm font-semibold text-lg hover:bg-gray-800 active:bg-gray-900 transition-all duration-200 shadow-lg relative overflow-hidden'
               >
                 <span className='flex items-center justify-center gap-3'>
                   Sign In
@@ -116,7 +120,7 @@ function UserLogin() {
             </div>
           </div>
         </div>
-      <Link to='/caption-login' className='group w-full bg-white text-black py-4 px-6 rounded-xl font-semibold text-lg relative overflow-hidden mt-15'>
+          <Link to='/caption-login' className='group w-full bg-white text-black py-4 px-6 rounded-sm font-semibold text-lg relative overflow-hidden mt-15'>
         <span className='flex items-center justify-center gap-3'>
           Login as Caption
           <svg 
