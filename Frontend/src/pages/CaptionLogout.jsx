@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Loader from '../components/Loader';
 
 const CaptionLogout = () => {
     const navigate = useNavigate();
-    const token = localStorage.getItem('caption');
+    const token = localStorage.getItem('captionToken');
+    const [isLoggingOut, setIsLoggingOut] = useState(true);
 
     useEffect(() => {
         const performLogout = async () => {
@@ -22,14 +24,16 @@ const CaptionLogout = () => {
                 });
 
                 if (response.status === 200) {
-                    localStorage.removeItem('caption');
+                    localStorage.removeItem('captionToken');
                     navigate('/caption-login');
                 }
             } catch (error) {
                 console.error('Logout error:', error);
                 // Even if logout fails, remove token and redirect
-                localStorage.removeItem('caption');
+                localStorage.removeItem('captionToken');
                 navigate('/caption-login');
+            } finally {
+                setIsLoggingOut(false);
             }
         };
 
@@ -37,10 +41,10 @@ const CaptionLogout = () => {
     }, [token, navigate]);
 
     return(
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-zinc-800 to-black">
             <div className="text-center">
-                <h1 className="text-2xl font-bold mb-4">Logging out...</h1>
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto"></div>
+                <h1 className="text-2xl font-bold mb-4 text-white">Logging out...</h1>
+                <Loader size="lg" text="Please wait" />
             </div>
         </div>
     )

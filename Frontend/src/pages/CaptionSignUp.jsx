@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { FiEye, FiEyeOff, FiUser, FiTruck, FiMapPin, FiAlertCircle, FiInfo, FiLock, FiArrowRight, FiChevronDown } from 'react-icons/fi'
 import { useCaption } from '../context/CaptionContext';
 import axios from 'axios';
+import PageLoader from '../components/PageLoader';
+import Loader from '../components/Loader';
 
 
 const CaptionSignUp = () => {
@@ -27,6 +29,11 @@ const CaptionSignUp = () => {
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [locationError, setLocationError] = useState('');
   
+  // Loading states
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  
   const [captionData, setCaptionData] = useState({
     firstName: '', 
     lastName: '', 
@@ -45,6 +52,15 @@ const CaptionSignUp = () => {
   });
   const {caption, setCaption} = useCaption();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Simulate page loading
+    const timer = setTimeout(() => {
+      setIsPageLoading(false);
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Function to get current location
   const getCurrentLocation = () => {
@@ -113,45 +129,38 @@ const CaptionSignUp = () => {
       alert('Last name must be at least 3 characters long!');
       return;
     }
-    
-    if (vehicleColor.length < 3) {
-      alert('Vehicle color must be at least 3 characters long!');
-      return;
-    }
-    
-    if (!vehiclePlate) {
-      alert('Vehicle plate number is required!');
-      return;
-    }
-    
-    if (!vehicleCapacity || vehicleCapacity < 1) {
-      alert('Vehicle capacity must be at least 1!');
-      return;
-    }
-    
-    if (!vehicleType) {
-      alert('Please select a vehicle type!');
-      return;
-    }
 
     // Location validation
     if (!latitude || !longitude) {
-      alert('Please provide your location coordinates!');
+      alert('Please provide location coordinates!');
       return;
     }
 
     const lat = parseFloat(latitude);
     const lng = parseFloat(longitude);
 
-    if (isNaN(lat) || lat < -90 || lat > 90) {
-      alert('Latitude must be a valid number between -90 and 90!');
+    if (isNaN(lat) || isNaN(lng)) {
+      alert('Please enter valid coordinates!');
       return;
     }
 
-    if (isNaN(lng) || lng < -180 || lng > 180) {
-      alert('Longitude must be a valid number between -180 and 180!');
+    if (lat < -90 || lat > 90) {
+      alert('Latitude must be between -90 and 90!');
       return;
     }
+
+    if (lng < -180 || lng > 180) {
+      alert('Longitude must be between -180 and 180!');
+      return;
+    }
+
+    // Terms and conditions validation
+    if (!agreeToTerms) {
+      alert('Please agree to the Terms & Conditions and Privacy Policy!');
+      return;
+    }
+
+    setIsLoading(true);
 
     const newCaption = {
       fullName: {
@@ -194,24 +203,7 @@ const CaptionSignUp = () => {
         setLatitude('');
         setLongitude('');
         setLocationError('');
-        
-        // Set caption data
-        setCaptionData({
-          firstName,
-          lastName,
-          email,
-          password,
-          vehicle: {
-            color: vehicleColor,
-            plate: vehiclePlate,
-            capacity: vehicleCapacity,
-            vehicleType: vehicleType
-          },
-          location: {
-            lat: lat,
-            lng: lng
-          }
-        });
+        setAgreeToTerms(false);
       }
     } catch (error) {
       console.error('Caption registration error:', error);
@@ -225,412 +217,396 @@ const CaptionSignUp = () => {
       } else {
         alert('Registration failed. Please try again.');
       }
+    } finally {
+      setIsLoading(false);
     }
   }
 
-    return (
+  return (
+    <>
+      <PageLoader show={isPageLoading} text="Loading Caption Sign Up..." />
       <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-800 to-black">
-      {/* Header with Logo */}
-      <div className='flex-1 min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 py-4 sm:py-8'>
-        <div className='mb-6 sm:mb-8 flex flex-col items-center gap-2 text-black'>
-          <img
-            src='https://res.cloudinary.com/dvkzdok8c/image/upload/v1753987868/uber_logo_white_ofgrxb.png'
-            alt='logo'
-            className='w-50 h-auto'
-          />
-          <h2 className='text-2xl font-bold text-white'>Caption</h2>
-        </div>
+        {/* Header with Logo */}
+        <div className='flex-1 min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 py-4 sm:py-8'>
+          <div className='mb-6 sm:mb-8 flex flex-col items-center gap-2 text-black'>
+            <img
+              src='https://res.cloudinary.com/dvkzdok8c/image/upload/v1753987868/uber_logo_white_ofgrxb.png'
+              alt='logo'
+              className='w-50 h-auto'
+            />
+            <h2 className='text-2xl font-bold text-white'>Caption</h2>
+          </div>
 
-        {/* Sign Up Form Card */}
-        <div className='w-full max-w-md'>
-          <div className='bg-transparent border border-white bg-opacity-5 backdrop-blur-[3px] rounded-2xl shadow-lg p-4 sm:p-6 md:p-8'>
-            <h2 className='text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8 text-white'>
-              Sign Up
-            </h2>
-            
-            <form className='space-y-6 sm:space-y-8' onSubmit={handleSubmit}>
-              {/* Personal Information Section */}
-              <div className="space-y-4 sm:space-y-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                    <FiUser className="w-4 h-4 text-white" />
+          {/* Sign Up Form Card */}
+          <div className='w-full max-w-md'>
+            <div className='bg-transparent border border-white bg-opacity-5 backdrop-blur-[3px] rounded-2xl shadow-lg p-4 sm:p-6 md:p-8'>
+              <h2 className='text-3xl font-bold text-center mb-6 text-white'>
+                Sign Up
+              </h2>
+              
+              <form className='space-y-6 sm:space-y-8' onSubmit={handleSubmit}>
+                {/* Personal Information Section */}
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                      <FiUser className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className='text-lg sm:text-xl font-semibold text-white'>Caption Details</h3>
                   </div>
-                  <h3 className='text-lg sm:text-xl font-semibold text-white'>Personal Information</h3>
-                </div>
-                
-                {/* Name Fields - Single Column Layout */}
-                <div className='space-y-4'>
-                  {/* First Name Field */}
+                  
+                  {/* Name Fields */}
+                  <div className='space-y-4'>
+                    <div className='space-y-2'>
+                      <label htmlFor='firstName' className='block text-sm font-medium text-white/90'>
+                        First Name
+                      </label>
+                      <input 
+                        id='firstName'
+                        type="text" 
+                        placeholder='Enter your first name' 
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
+                    
+                    <div className='space-y-2'>
+                      <label htmlFor='lastName' className='block text-sm font-medium text-white/90'>
+                        Last Name
+                      </label>
+                      <input 
+                        id='lastName'
+                        type="text" 
+                        placeholder='Enter your last name' 
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email Field */}
                   <div className='space-y-2'>
-                    <label htmlFor='firstName' className='block text-sm font-medium text-white/90'>
-                      First Name
+                    <label htmlFor='email' className='block text-sm font-medium text-white/90'>
+                      Email Address
                     </label>
                     <input 
-                      id='firstName'
-                      type="text" 
-                      placeholder='Enter first name' 
-                      required 
-                      autoComplete="given-name"
-                      className='w-full bg-white/90 backdrop-blur-sm px-4 py-3 text-gray-900 placeholder-gray-500 rounded-lg text-base border border-white/20 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
+                      id='email'
+                      type="email" 
+                      placeholder='Enter your email address' 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
+                      required
+                      disabled={isLoading}
                     />
                   </div>
+                </div>
 
-                  {/* Last Name Field */}
+                {/* Vehicle Information Section */}
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                      <FiTruck className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className='text-lg sm:text-xl font-semibold text-white'>Caption Vehicle Details</h3>
+                  </div>
+                  
+                  {/* Vehicle Type Dropdown */}
                   <div className='space-y-2'>
-                    <label htmlFor='lastName' className='block text-sm font-medium text-white/90'>
-                      Last Name
+                    <label htmlFor='vehicleType' className='block text-sm font-medium text-white/90'>
+                      Vehicle Type
                     </label>
-                    <input 
-                      id='lastName'
-                      type="text" 
-                      placeholder='Enter last name' 
-                      required 
-                      autoComplete="family-name"
-                      className='w-full bg-white/90 backdrop-blur-sm px-4 py-3 text-gray-900 placeholder-gray-500 rounded-lg text-base border border-white/20 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                {/* Email Field */}
-                <div className='space-y-2'>
-                  <label htmlFor='email' className='block text-sm font-medium text-white/90'>
-                    Email Address
-                  </label>
-                  <input 
-                    id='email'
-                    type="email" 
-                    placeholder='Enter your email address' 
-                    required 
-                    autoComplete="email"
-                    className='w-full bg-white/90 backdrop-blur-sm px-4 py-3 text-gray-900 placeholder-gray-500 rounded-lg text-base border border-white/20 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-
-                {/* Password Fields */}
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                  {/* Password Field */}
-                  <div className="relative space-y-2">
-                    <label htmlFor="password" className="block text-sm font-medium text-white/90">
-                      Password
-                    </label>
-                    <input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Create password"
-                      required
-                      autoComplete="new-password"
-                      className="w-full bg-white/90 backdrop-blur-sm px-4 py-3 text-gray-900 placeholder-gray-500 pr-12 rounded-lg text-base border border-white/20 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      className="absolute right-3 top-9 text-gray-500 hover:text-gray-700 p-1 transition-colors duration-200"
-                    >
-                      {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
-                    </button>
-                  </div>
-
-                  {/* Confirm Password Field */}
-                  <div className="relative space-y-2">
-                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-white/90">
-                      Confirm Password
-                    </label>
-                    <input
-                      id="confirmPassword"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      placeholder="Confirm password"
-                      required
-                      autoComplete="new-password"
-                      className={`w-full bg-white/90 backdrop-blur-sm px-4 py-3 text-gray-900 placeholder-gray-500 pr-12 rounded-lg text-base border border-white/20 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                        confirmPassword && password !== confirmPassword 
-                          ? 'border-red-400 focus:ring-red-500' 
-                          : ''
-                      }`}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword((prev) => !prev)}
-                      className="absolute right-3 top-9 text-gray-500 hover:text-gray-700 focus:outline-none p-1 transition-colors duration-200"
-                    >
-                      {showConfirmPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
-                    </button>
-                    {confirmPassword && password !== confirmPassword && (
-                      <p className="text-red-300 text-xs mt-1 flex items-center gap-1">
-                        <FiAlertCircle className="w-3 h-3" />
-                        Passwords do not match
+                    <div className='relative'>
+                      <select
+                        id='vehicleType'
+                        value={vehicleType}
+                        onChange={(e) => setVehicleType(e.target.value)}
+                        className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none pr-10'
+                        required
+                        disabled={isLoading}
+                      >
+                        <option value='' className='bg-zinc-800 text-white'>Select vehicle type</option>
+                        <option value='car' className='bg-zinc-800 text-white'>🚗 Car</option>
+                        <option value='bike' className='bg-zinc-800 text-white'>🏍️ Bike</option>
+                        <option value='auto' className='bg-zinc-800 text-white'>🛺 Auto</option>
+                        <option value='other' className='bg-zinc-800 text-white'>🚐 Other</option>
+                      </select>
+                      <FiChevronDown className='absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none w-5 h-5' />
+                    </div>
+                    {vehicleType && (
+                      <p className='text-xs text-white/60 mt-1'>
+                        {vehicleType === 'car' && 'Perfect for comfortable rides with up to 4 passengers'}
+                        {vehicleType === 'bike' && 'Ideal for quick solo trips and traffic navigation'}
+                        {vehicleType === 'auto' && 'Great for short distances and local travel'}
+                        {vehicleType === 'other' && 'Suitable for special transportation needs'}
                       </p>
                     )}
                   </div>
-                </div>
-              </div>
 
-              {/* Vehicle Information Section */}
-              <div className="space-y-4 sm:space-y-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                    <FiTruck className="w-4 h-4 text-white" />
-                  </div>
-                  <h3 className='text-lg sm:text-xl font-semibold text-white'>Vehicle Information</h3>
-                </div>
-                
-                {/* Vehicle Details Grid */}
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                  {/* Vehicle Color */}
-                  <div className="space-y-2">
-                    <label htmlFor="vehicleColor" className="block text-sm font-medium text-white/90">
-                      Vehicle Color
-                    </label>
-                    <input 
-                      id="vehicleColor"
-                      type="text" 
-                      placeholder="Enter vehicle color" 
-                      required 
-                      autoComplete="off"
-                      className="w-full bg-white/90 backdrop-blur-sm px-4 py-3 text-gray-900 placeholder-gray-500 rounded-lg text-base border border-white/20 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      value={vehicleColor}
-                      onChange={(e) => setVehicleColor(e.target.value)}
-                    />
+                  {/* Vehicle Details */}
+                  <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                    <div className='space-y-2'>
+                      <label htmlFor='vehicleColor' className='block text-sm font-medium text-white/90'>
+                        Vehicle Color
+                      </label>
+                      <input 
+                        id='vehicleColor'
+                        type="text" 
+                        placeholder='Red, Blue' 
+                        value={vehicleColor}
+                        onChange={(e) => setVehicleColor(e.target.value)}
+                        className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
+                    
+                    <div className='space-y-2'>
+                      <label htmlFor='vehiclePlate' className='block text-sm font-medium text-white/90'>
+                        Vehicle Number
+                      </label>
+                      <input 
+                        id='vehiclePlate'
+                        type="text" 
+                        placeholder='Enter Vehicle Number' 
+                        value={vehiclePlate}
+                        onChange={(e) => setVehiclePlate(e.target.value)}
+                        className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
                   </div>
 
-                  {/* Vehicle Plate */}
-                  <div className="space-y-2">
-                    <label htmlFor="vehiclePlate" className="block text-sm font-medium text-white/90">
-                      Vehicle Number Plate
-                    </label>
-                    <input 
-                      id="vehiclePlate"
-                      type="text" 
-                      placeholder="Enter vehicle number plate" 
-                      required 
-                      autoComplete="off"
-                      className="w-full bg-white/90 backdrop-blur-sm px-4 py-3 text-gray-900 placeholder-gray-500 rounded-lg text-base border border-white/20 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      value={vehiclePlate}
-                      onChange={(e) => setVehiclePlate(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                {/* Vehicle Capacity and Type */}
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                  {/* Vehicle Capacity */}
-                  <div className="space-y-2">
-                    <label htmlFor="vehicleCapacity" className="block text-sm font-medium text-white/90">
+                  <div className='space-y-2'>
+                    <label htmlFor='vehicleCapacity' className='block text-sm font-medium text-white/90'>
                       Passenger Capacity
                     </label>
                     <input 
-                      id="vehicleCapacity"
+                      id='vehicleCapacity'
                       type="number" 
-                      placeholder="Enter passenger capacity" 
-                      required 
                       min="1"
-                      autoComplete="off"
-                      className="w-full bg-white/90 backdrop-blur-sm px-4 py-3 text-gray-900 placeholder-gray-500 rounded-lg text-base border border-white/20 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      max="10"
+                      placeholder='Enter Vehicle Passenger Capacity' 
                       value={vehicleCapacity}
                       onChange={(e) => setVehicleCapacity(e.target.value)}
+                      className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
+                      required
+                      disabled={isLoading}
                     />
                   </div>
-
-                  {/* Vehicle Type */}
-                  <div className="space-y-2">
-                    <label htmlFor="vehicleType" className="block text-sm font-medium text-white/90">
-                      Vehicle Type
-                    </label>
-                    <div className="relative">
-                      <select
-                        id="vehicleType"
-                        required
-                        className="w-full bg-white/90 backdrop-blur-sm text-gray-800 px-4 py-3 rounded-lg shadow-sm appearance-none cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-transparent text-base border border-white/20"
-                        value={vehicleType}
-                        onChange={(e) => setVehicleType(e.target.value)}
-                      >
-                        <option value="" disabled className="text-gray-400">
-                          Select vehicle type
-                        </option>
-                        <option value="car">🚗 Car</option>
-                        <option value="bike">🏍️ Bike</option>
-                        <option value="auto">🛺 Auto</option>
-                        <option value="other">🚐 Other</option>
-                      </select>
-
-                      {/* Dropdown icon */}
-                      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                        <FiChevronDown className="w-5 h-5 text-gray-500 transition-transform duration-300 ease-in-out" />
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
-                {/* Vehicle description */}
-                {vehicleType && (
-                  <div className="p-4 rounded-lg bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-400/30 text-white text-sm backdrop-blur-sm shadow-sm">
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <FiInfo className="w-3 h-3 text-blue-300" />
-                      </div>
-                      <p>
-                        {vehicleType === 'car' && '🚗 Perfect for comfortable rides with multiple passengers'}
-                        {vehicleType === 'bike' && '🏍️ Great for quick trips and single passengers'}
-                        {vehicleType === 'auto' && '🛺 Ideal for short distance rides and city travel'}
-                        {vehicleType === 'other' && '🚐 Suitable for special transportation needs'}
-                      </p>
+                {/* Location Information Section */}
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                      <FiMapPin className="w-4 h-4 text-white" />
                     </div>
+                    <h3 className='text-lg sm:text-xl font-semibold text-white'>Location Information</h3>
                   </div>
-                )}
-              </div>
-
-              {/* Location Information Section */}
-              <div className="space-y-4 sm:space-y-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                    <FiMapPin className="w-4 h-4 text-white" />
-                  </div>
-                  <h3 className='text-lg sm:text-xl font-semibold text-white'>Location Information</h3>
-                </div>
-                
-                {/* Get Current Location Button */}
-                {!latitude && !longitude && (
-                  <div className="flex justify-center">
+                  {/* Get Current Location Button */}
+                  {!latitude && !longitude && (
                     <button
-                      type="button"
+                      type='button'
                       onClick={getCurrentLocation}
-                      disabled={isLoadingLocation}
-                      className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
-                        isLoadingLocation
-                          ? 'bg-gray-400 text-white cursor-not-allowed'
-                          : 'bg-gradient-to-r from-zinc-900 to-black text-white hover:from-zinc-900 hover:to-zinc-800 active:from-black active:to-zinc-900 transform hover:scale-105 active:scale-95 border-2 border-white'
-                      } shadow-lg`}
+                      disabled={isLoadingLocation || isLoading}
+                      className='w-full border-1 border-white text-white px-4 py-3 rounded-xl font-medium flex items-center justify-center gap-3'
                     >
                       {isLoadingLocation ? (
                         <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          <Loader size="sm" text="" />
                           Getting Location...
                         </>
                       ) : (
                         <>
-                          <FiMapPin className="w-4 h-4" />
+                          <FiMapPin className='w-5 h-5' />
                           Get Current Location
                         </>
                       )}
                     </button>
-                  </div>
-                )}
+                  )}
 
-                {/* Location Error Message */}
-                {locationError && (
-                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-400/30 text-red-300 text-sm backdrop-blur-sm">
-                    <div className="flex items-start gap-2">
-                      <FiAlertCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
-                      <p>{locationError}</p>
+                  {/* Location Error */}
+                  {locationError && (
+                    <div className='flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-lg'>
+                      <FiAlertCircle className='w-5 h-5 text-red-400 mt-0.5 flex-shrink-0' />
+                      <p className='text-red-400 text-sm'>{locationError}</p>
+                    </div>
+                  )}
+
+                  {/* Manual Location Input */}
+                  <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                    <div className='space-y-2'>
+                      <label htmlFor='latitude' className='block text-sm font-medium text-white/90'>
+                        Latitude
+                      </label>
+                      <input 
+                        id='latitude'
+                        type="number" 
+                        step="any"
+                        placeholder='e.g., 24.8607' 
+                        value={latitude}
+                        onChange={(e) => setLatitude(e.target.value)}
+                        className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
+                    
+                    <div className='space-y-2'>
+                      <label htmlFor='longitude' className='block text-sm font-medium text-white/90'>
+                        Longitude
+                      </label>
+                      <input 
+                        id='longitude'
+                        type="number" 
+                        step="any"
+                        placeholder='e.g., 67.0011' 
+                        value={longitude}
+                        onChange={(e) => setLongitude(e.target.value)}
+                        className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
+                        required
+                        disabled={isLoading}
+                      />
                     </div>
                   </div>
-                )}
-                
-                {/* Location Fields */}
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                  {/* Latitude */}
-                  <div className="space-y-2">
-                    <label htmlFor="latitude" className="block text-sm font-medium text-white/90">
-                      Latitude
-                    </label>
-                    <input 
-                      id="latitude"
-                      type="number" 
-                      step="any"
-                      placeholder="e.g., 40.7128" 
-                      required 
-                      autoComplete="off"
-                      className="w-full bg-white/90 backdrop-blur-sm px-4 py-3 text-gray-900 placeholder-gray-500 rounded-lg text-base border border-white/20 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      value={latitude}
-                      onChange={(e) => setLatitude(e.target.value)}
-                    />
-                    {/* <p className="text-xs text-white/70">Must be between -90 and 90</p> */}
-                  </div>
 
-                  {/* Longitude */}
-                  <div className="space-y-2">
-                    <label htmlFor="longitude" className="block text-sm font-medium text-white/90">
-                      Longitude
-                    </label>
-                    <input 
-                      id="longitude"
-                      type="number" 
-                      step="any"
-                      placeholder="e.g., -74.0060" 
-                      required 
-                      autoComplete="off"
-                      className="w-full bg-white/90 backdrop-blur-sm px-4 py-3 text-gray-900 placeholder-gray-500 rounded-lg text-base border border-white/20 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      value={longitude}
-                      onChange={(e) => setLongitude(e.target.value)}
-                    />
-                    {/* <p className="text-xs text-white/70">Must be between -180 and 180</p> */}
-                  </div>
-                </div>
-
-                {/* Location Help Text */}
-                <div className="p-4 rounded-lg bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-400/30 text-white text-sm backdrop-blur-sm shadow-sm">
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <FiInfo className="w-3 h-3 text-purple-300" />
-                    </div>
-                    <p>
-                      📍 Click "Get Current Location" to automatically fill your coordinates, or enter them manually. You can also find coordinates by searching your address on Google Maps.
+                  {/* Location Help Text */}
+                  {/* <div className='flex items-start gap-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg'>
+                    <FiInfo className='w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0' />
+                    <p className='text-blue-400 text-sm'>
+                      Location coordinates help us match you with nearby passengers. You can use the "Get Current Location" button or enter coordinates manually.
                     </p>
+                  </div> */}
+                </div>
+
+                {/* Password Information Section */}
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                      <FiLock className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className='text-lg sm:text-xl font-semibold text-white'>Password Information</h3>
+                  </div>
+                  
+                  {/* Password Field */}
+                  <div className='space-y-2'>
+                    <label htmlFor='password' className='block text-sm font-medium text-white/90'>
+                      Password
+                    </label>
+                    <div className='relative'>
+                      <input 
+                        id='password'
+                        type={showPassword ? 'text' : 'password'} 
+                        placeholder='Enter your password' 
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12'
+                        required
+                        disabled={isLoading}
+                      />
+                      <button
+                        type='button'
+                        onClick={() => setShowPassword(!showPassword)}
+                        className='absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50 hover:text-white transition-colors duration-200'
+                        disabled={isLoading}
+                      >
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Confirm Password Field */}
+                  <div className='space-y-2'>
+                    <label htmlFor='confirmPassword' className='block text-sm font-medium text-white/90'>
+                      Confirm Password
+                    </label>
+                    <div className='relative'>
+                      <input 
+                        id='confirmPassword'
+                        type={showConfirmPassword ? 'text' : 'password'} 
+                        placeholder='Confirm your password' 
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12'
+                        required
+                        disabled={isLoading}
+                      />
+                      <button
+                        type='button'
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className='absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50 hover:text-white transition-colors duration-200'
+                        disabled={isLoading}
+                      >
+                        {showConfirmPassword ? <FiEyeOff className='w-5 h-5' /> : <FiEye className='w-5 h-5' />}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Submit Button */}
-              <div className="pt-4">
-                <button 
+                <div className='flex items-start gap-3 mb-4'>
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    checked={agreeToTerms}
+                    onChange={(e) => setAgreeToTerms(e.target.checked)}
+                    disabled={isLoading}
+                    className="w-10 h-10 text-green-600 bg-white/10 border-white/20 rounded focus:ring-green-800 mt-1"
+                  />
+                  <label htmlFor="terms" className='text-white/70 text-sm leading-relaxed'>
+                    I agree to Uber's <span className='text-green-500 underline cursor-pointer'>Terms & Conditions</span> and <span className='text-green-500 underline cursor-pointer'>Privacy Policy</span>
+                  </label>
+                </div>
+
+                {/* Submit Button */}
+                <button
                   type='submit'
-                  className='group w-full bg-gradient-to-r from-zinc-900 to-black text-white py-4 px-6 rounded-xl font-semibold text-lg hover:from-zinc-900 hover:to-zinc-800 active:from-black active:to-zinc-900 transition-all duration-300 shadow-xl relative overflow-hidden touch-manipulation transform hover:scale-[1.02] active:scale-[0.98] border-2 border-white'>
-                  <span className='flex items-center justify-center gap-3'>
-                    <FiLock className="w-5 h-5" />
-                    Create Account
-                    <FiArrowRight 
-                      className='w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 group-active:translate-x-2' 
-                    />
-                  </span>
+                  disabled={isLoading}
+                  className='group w-full bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-4 rounded-xl font-semibold text-lg hover:from-green-700 hover:to-green-800 active:from-green-800 active:to-green-900 transition-all duration-200 shadow-lg relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed'
+                >
+                  {isLoading ? (
+                    <span className='flex items-center justify-center gap-3'>
+                      <Loader size="sm" text="" />
+                      Creating Account...
+                    </span>
+                  ) : (
+                    <span className='flex items-center justify-center gap-3'>
+                      <FiLock className='w-5 h-5' />
+                      Create Account
+                      <FiArrowRight className='w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 group-active:translate-x-2' />
+                    </span>
+                  )}
                 </button>
-                
-                {/* Terms and Conditions */}
-                <p className="text-xs text-white/70 text-center mt-3 leading-relaxed">
-                  By creating an account, you agree to our{' '}
-                  <a href="#" className="text-blue-300 hover:text-blue-200 underline transition-colors duration-200">Terms of Service</a>
-                  {' '}and{' '}
-                  <a href="#" className="text-blue-300 hover:text-blue-200 underline transition-colors duration-200">Privacy Policy</a>
-                </p>
-              </div>
-            </form>
 
-            {/* Login Link */}
-            <div className='mt-4 sm:mt-6 text-center'>
-              <p className='text-white text-sm sm:text-base'>
-                Already a Caption?{' '}
-                <a href='/caption-login' className='text-white hover:text-blue-800 text-lg sm:text-xl font-bold transition-colors duration-200'>
-                  Login
-                </a>
-              </p>
+                
+
+                {/* Login Link */}
+                <div className='text-center'>
+                  <p className='text-white/70 text-md'>
+                    Already have an account?{' '}
+                    <Link 
+                      to='/caption-login' 
+                      className='text-green-400 font-bold text-md transition-colors duration-200'
+                    >
+                      Login
+                    </Link>
+                  </p>
+                </div>  
+
+               
+              </form>
             </div>
+              <p className='mt-4 mb-5 text-xs sm:text-sm leading-tight px-4 text-white'>*This site is protected by reCAPTCHA and the <span className='text-green-500 underline cursor-pointer'>Google Privacy Policy</span> and <span className='text-green-500 underline cursor-pointer'>Terms of Service</span> apply.</p>
           </div>
         </div>
-        
-        <p className='text-xs sm:text-sm leading-tight pt-3 sm:pt-4 text-center text-white px-4'>
-          *This site is protected by reCAPTCHA and the <span className='text-blue-500 underline'>Google Privacy Policy</span> and <span className='text-blue-500 underline'>Terms of Service</span> apply.
-        </p>
       </div>
-    </div>
+    </>
   )
 }
 
-export default CaptionSignUp;
+export default CaptionSignUp
