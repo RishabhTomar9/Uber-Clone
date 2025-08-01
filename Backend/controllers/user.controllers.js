@@ -70,8 +70,19 @@ module.exports.getUserProfile = async (req, res, next) => {
 }
 
 module.exports.logoutUser = async (req, res, next) => {
-    const token = req.cookies.token || req.header('Authorization')?.split(' ')[1];
-    await BlacklistToken.create({ token });
-    res.clearCookie('token');
-    res.status(200).json({ message: 'Logged out successfully' });
+    try {
+        const token = req.cookies.token || req.header('Authorization')?.split(' ')[1];
+        
+        if (token) {
+            await BlacklistToken.create({ token });
+        }
+        
+        res.clearCookie('token');
+        res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+        console.error('Logout error:', error);
+        // Even if blacklisting fails, still clear the cookie and return success
+        res.clearCookie('token');
+        res.status(200).json({ message: 'Logged out successfully' });
+    }
 }

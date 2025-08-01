@@ -23,7 +23,7 @@ A modern, mobile-first React application that replicates the core functionality 
 - **Mobile Optimized**: Touch-friendly interactions and mobile-specific styling
 - **Context API**: Global state management
 - **Local Storage**: Persistent user data storage
-
+ 
 ## 📱 Mobile-First Design
 
 The application is built with mobile users in mind, featuring:
