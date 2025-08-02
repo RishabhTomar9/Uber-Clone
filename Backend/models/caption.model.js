@@ -24,6 +24,15 @@ const captionSchema = new mongoose.Schema({
             'Please enter a valid email address',
         ],
     },
+    phone: {
+        type: String,
+        required: true,
+        unique: true,
+        match: [
+            /^[0-9]{10}$/,
+            'Please enter a valid phone number',
+        ],
+    },
     password: {
         type: String,
         required: true,
@@ -71,6 +80,7 @@ const captionSchema = new mongoose.Schema({
     },
     createdAt: {
         type: Date,
+        default: Date.now,
     }
 })
 
@@ -80,11 +90,22 @@ captionSchema.methods.generateAuthToken = function() {
 }
 
 captionSchema.methods.comparePassword = async function(password) {
-    return await bcrypt.compare(password, this.password);
+    try {
+        return await bcrypt.compare(password, this.password);
+    } catch (error) {
+        console.error('Error comparing password:', error);
+        return false;
+    }
 }
 
 captionSchema.statics.hashPassword = async function(password) {
-    return await bcrypt.hash(password, 10);
+    try {
+        const saltRounds = 10;
+        return await bcrypt.hash(password, saltRounds);
+    } catch (error) {
+        console.error('Error hashing password:', error);
+        throw new Error('Failed to hash password');
+    }
 }
 
 const captionModel = mongoose.model('caption', captionSchema);

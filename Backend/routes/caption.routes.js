@@ -8,6 +8,7 @@ const { authCaption } = require('../middlewares/auth.middlewares');
 router.post('/register', [
     body('fullName.firstName').isLength({ min: 3 }).withMessage('First name must be at least 3 characters long'),
     body('fullName.lastName').isLength({ min: 3 }).withMessage('Last name must be at least 3 characters long'),
+    body('phone').isLength({ min: 10, max: 10 }).withMessage('Phone number must be 10 digits'),
     body('email').isEmail().withMessage('Invalid email address'),
     body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
     body('vehicle.color').isLength({ min: 3 }).withMessage('Color must be at least 3 characters long'),
@@ -19,7 +20,7 @@ router.post('/register', [
 ], captionController.registerCaption);
 
 router.post('/login',[
-    body('email').isEmail().withMessage('Invalid email address'),
+    body('email').isEmail().withMessage('Invalid email address') ,
     body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
 ], captionController.loginCaption);
 

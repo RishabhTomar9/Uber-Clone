@@ -10,29 +10,39 @@ module.exports.registerCaption = async (req, res, next) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { fullName, email, password, vehicle, location } = req.body;
+    const { fullName, email, password, phone, vehicle, location } = req.body;
 
     const isCaptionAlreadyExists = await captionModel.findOne({email});
     if(isCaptionAlreadyExists) {
         return res.status(400).json({ message: 'Caption already exists' });
     }
 
-    const hashedPassword = await captionModel.hashPassword(password);
+    try {
+        const hashedPassword = await captionModel.hashPassword(password);
 
-    const caption = await captionService.createCaption({
-        fullName,
-        email,
-        password: hashedPassword,
-        vehicle,
-        location
-    });
+        const caption = await captionService.createCaption({
+            fullName,
+            email,
+            password: hashedPassword,
+            phone,
+            vehicle,
+            location
+        });
 
-    const token = caption.generateAuthToken();
-    res.cookie('token', token);
-    res.status(201).json({
-        message: 'Caption created successfully',
-        caption,
-    });
+        const token = caption.generateAuthToken();
+        res.cookie('token', token);
+        res.status(201).json({
+            message: 'Caption created successfully',
+            caption,
+            token,
+        });
+    } catch (error) {
+        console.error('Error in registerCaption:', error);
+        res.status(500).json({ 
+            message: 'Internal server error',
+            error: error.message 
+        });
+    }
     
 }
 

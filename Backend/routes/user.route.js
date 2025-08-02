@@ -9,6 +9,7 @@ router.post('/register', [
     body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
     body('fullName.firstName').isLength({ min: 3 }).withMessage('First name must be at least 3 characters long'),
     body('fullName.lastName').isLength({ min: 3 }).withMessage('Last name must be at least 3 characters long'),
+    body('phone').isLength({ min: 10, max: 11 }).withMessage('Phone number must be 10 digits'),
     body('confirmPassword').custom((value, { req }) => {
         if (value !== req.body.password) {
             throw new Error('Passwords do not match');

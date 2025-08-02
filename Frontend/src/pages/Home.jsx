@@ -30,9 +30,23 @@ const Home = () => {
               className='w-50 h-auto'
             />
           </div>
-          <div className='flex-1 h-screen flex flex-col justify-center items-center px-6 py-8'>
-            <h1 className='text-4xl font-bold text-center text-white'>Welcome, {user.fullName.firstName} {user.fullName.lastName}</h1>
-            <button className='bg-white text-black px-4 py-2 rounded-md' onClick={() => navigate('/user/logout')}>Logout</button>
+          <div className='flex-1 h-screen flex flex-col justify-center items-center px-6 py-8 space-y-6'>
+            <div className='bg-black/50 p-8 rounded-xl backdrop-blur-sm'>
+              <h1 className='text-4xl font-bold text-center text-white mb-6'>Welcome, {user.fullName.firstName} {user.fullName.lastName}</h1>
+              
+              <div className='space-y-4 text-white'>
+                <p className='text-lg'><span className='font-semibold'>Email:</span> {user.email}</p>
+                <p className='text-lg'><span className='font-semibold'>Created At:</span> {new Date(user.createdAt).toLocaleDateString()}</p>
+                <p className='text-lg'><span className='font-semibold'>Account Type:</span> User</p>
+              </div>
+            </div>
+            
+            <button 
+              className='bg-white text-black px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors duration-200' 
+              onClick={() => navigate('/user/logout')}
+            >
+              Logout
+            </button>
           </div>
       </div>
     </>

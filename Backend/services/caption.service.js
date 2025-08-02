@@ -2,10 +2,11 @@ const captionModel = require('../models/caption.model');
 
 
 
-module.exports.createCaption = async ({ fullName: { firstName, lastName }, email, password, vehicle: { color, plate, capacity, vehicleType }, location: { lat, lng } }) => {
+module.exports.createCaption = async ({ fullName: { firstName, lastName }, email, password, phone, vehicle: { color, plate, capacity, vehicleType }, location: { lat, lng } }) => {
     if (
       !firstName ||
       !lastName ||
+      !phone ||
       !email ||
       !password ||
       !color ||
@@ -25,6 +26,7 @@ module.exports.createCaption = async ({ fullName: { firstName, lastName }, email
       },
       email,
       password,
+      phone,
       vehicle: {
         color,
         plate,

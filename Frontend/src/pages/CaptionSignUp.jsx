@@ -16,7 +16,7 @@ const CaptionSignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+  const [phone, setPhone] = useState(''); 
   // Vehicle information fields
   const [vehicleColor, setVehicleColor] = useState('');
   const [vehiclePlate, setVehiclePlate] = useState('');
@@ -169,7 +169,8 @@ const CaptionSignUp = () => {
       },
       email: email,
       password: password,
-      vehicle: {
+      phone: phone,
+        vehicle: {
         color: vehicleColor,
         plate: vehiclePlate,
         capacity: parseInt(vehicleCapacity),
@@ -193,6 +194,7 @@ const CaptionSignUp = () => {
         // Reset form only on success
         setFirstName('');
         setLastName('');
+        setPhone('');
         setEmail('');
         setPassword('');
         setConfirmPassword('');
@@ -283,6 +285,34 @@ const CaptionSignUp = () => {
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Phone Number Field */}
+                  <div className='space-y-2'>
+                    <label htmlFor='phone' className='block text-sm font-medium text-white/90'>
+                      Phone Number
+                    </label>
+                    <div className='relative'>
+                      <span className='absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70'>
+                        +91
+                      </span>
+                      <input 
+                        id='phone'
+                        type="tel" 
+                        placeholder='Enter your phone number'
+                        value={phone}
+                        maxLength={10}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '' || (value.length === 1 && /^[6-9]$/.test(value)) || (value.length > 1 && /^[6-9][0-9]*$/.test(value))) {
+                            setPhone(value);
+                          }
+                        }}
+                        className='w-full px-4 py-3 pl-12 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
                         required
                         disabled={isLoading}
                       />

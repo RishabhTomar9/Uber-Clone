@@ -32,6 +32,12 @@ const userSchema = new mongoose.Schema({
         minlength: [8, 'Password must be at least 8 characters long'],
         maxlength: [100, 'Password must be less than 100 characters long'],
     },
+    phone: {
+        type: String,
+        required: true,
+        unique: true,
+        match: [/^[0-9]{10,11}$/, 'Please enter a valid phone number'],
+    },
     createdAt: {
         type: Date,
         default: Date.now,
