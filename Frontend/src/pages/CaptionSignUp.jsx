@@ -257,7 +257,7 @@ const CaptionSignUp = () => {
                   </div>
                   
                   {/* Name Fields */}
-                  <div className='space-y-4'>
+                  <div className='grid grid-cols-2 gap-4 items-center justify-center'>
                     <div className='space-y-2'>
                       <label htmlFor='firstName' className='block text-sm font-medium text-white/90'>
                         First Name
@@ -265,7 +265,7 @@ const CaptionSignUp = () => {
                       <input 
                         id='firstName'
                         type="text" 
-                        placeholder='Enter your first name' 
+                        placeholder='First name' 
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
@@ -281,7 +281,7 @@ const CaptionSignUp = () => {
                       <input 
                         id='lastName'
                         type="text" 
-                        placeholder='Enter your last name' 
+                        placeholder='Last name' 
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
@@ -303,7 +303,7 @@ const CaptionSignUp = () => {
                       <input 
                         id='phone'
                         type="tel" 
-                        placeholder='Enter your phone number'
+                        placeholder='Phone number'
                         value={phone}
                         maxLength={10}
                         onChange={(e) => {
@@ -327,7 +327,7 @@ const CaptionSignUp = () => {
                     <input 
                       id='email'
                       type="email" 
-                      placeholder='Enter your email address' 
+                      placeholder='Email ' 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
@@ -361,10 +361,10 @@ const CaptionSignUp = () => {
                         disabled={isLoading}
                       >
                         <option value='' className='bg-zinc-800 text-white'>Select vehicle type</option>
-                        <option value='car' className='bg-zinc-800 text-white'>🚗 Car</option>
-                        <option value='bike' className='bg-zinc-800 text-white'>🏍️ Bike</option>
-                        <option value='auto' className='bg-zinc-800 text-white'>🛺 Auto</option>
-                        <option value='other' className='bg-zinc-800 text-white'>🚐 Other</option>
+                        <option value='car' className='bg-zinc-800 text-white'>Car</option>
+                        <option value='bike' className='bg-zinc-800 text-white'>Bike</option>
+                        <option value='auto' className='bg-zinc-800 text-white'>Auto</option>
+                        <option value='other' className='bg-zinc-800 text-white'>Other</option>
                       </select>
                       <FiChevronDown className='absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none w-5 h-5' />
                     </div>
@@ -379,7 +379,7 @@ const CaptionSignUp = () => {
                   </div>
 
                   {/* Vehicle Details */}
-                  <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                  <div className='grid grid-cols-2 gap-4'>
                     <div className='space-y-2'>
                       <label htmlFor='vehicleColor' className='block text-sm font-medium text-white/90'>
                         Vehicle Color
@@ -397,6 +397,25 @@ const CaptionSignUp = () => {
                     </div>
                     
                     <div className='space-y-2'>
+                    <label htmlFor='vehicleCapacity' className='block text-sm font-medium text-white/90'>
+                      Passenger Capacity
+                    </label>
+                    <input 
+                      id='vehicleCapacity'
+                      type="number" 
+                      min="1"
+                      max="10"
+                      placeholder='Passenger Capacity' 
+                      value={vehicleCapacity}
+                      onChange={(e) => setVehicleCapacity(e.target.value)}
+                      className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
+                      required
+                      disabled={isLoading}
+                    />
+                  </div>   
+                  </div>
+
+                  <div className='space-y-2'>
                       <label htmlFor='vehiclePlate' className='block text-sm font-medium text-white/90'>
                         Vehicle Number
                       </label>
@@ -411,25 +430,6 @@ const CaptionSignUp = () => {
                         disabled={isLoading}
                       />
                     </div>
-                  </div>
-
-                  <div className='space-y-2'>
-                    <label htmlFor='vehicleCapacity' className='block text-sm font-medium text-white/90'>
-                      Passenger Capacity
-                    </label>
-                    <input 
-                      id='vehicleCapacity'
-                      type="number" 
-                      min="1"
-                      max="10"
-                      placeholder='Enter Vehicle Passenger Capacity' 
-                      value={vehicleCapacity}
-                      onChange={(e) => setVehicleCapacity(e.target.value)}
-                      className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
-                      required
-                      disabled={isLoading}
-                    />
-                  </div>
                 </div>
 
                 {/* Location Information Section */}
@@ -471,7 +471,7 @@ const CaptionSignUp = () => {
                   )}
 
                   {/* Manual Location Input */}
-                  <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                  <div className='grid grid-cols-2 gap-4'>
                     <div className='space-y-2'>
                       <label htmlFor='latitude' className='block text-sm font-medium text-white/90'>
                         Latitude

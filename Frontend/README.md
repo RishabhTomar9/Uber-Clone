@@ -5,24 +5,29 @@ A modern, mobile-first React application that replicates the core functionality 
 ## 🚀 Features
 
 ### Core Functionality
-- **User Authentication**: Login and signup flows for regular users
-- **Caption Login**: Separate authentication for caption/driver users
+- **Dual Authentication System**: Separate login/signup flows for regular users and caption/driver users
+- **Protected Routes**: Route protection with authentication wrappers
 - **Mobile-First Design**: Optimized for mobile devices with touch-friendly interactions
 - **Responsive Layout**: Seamless experience across all screen sizes
 - **Modern UI/UX**: Clean, intuitive interface with smooth animations
 - **Context Management**: Global state management with React Context
 - **Form Validation**: Real-time validation with error handling
 - **Password Security**: Toggle password visibility with secure input handling
+- **Location Services**: GPS integration for caption users
+- **Vehicle Management**: Comprehensive vehicle registration for caption users
+- **Loading States**: Professional loading animations and page transitions
 
 ### Technical Features
 - **React 18**: Latest React features and hooks
 - **Vite**: Fast development and build tooling
 - **Tailwind CSS**: Utility-first CSS framework
-- **React Router**: Client-side routing
+- **React Router**: Client-side routing with protected routes
 - **React Icons**: Beautiful icon library (Feather Icons)
+- **Axios**: HTTP client for API communication
 - **Mobile Optimized**: Touch-friendly interactions and mobile-specific styling
-- **Context API**: Global state management
-- **Local Storage**: Persistent user data storage
+- **Context API**: Global state management for users and captions
+- **Local Storage**: Persistent user data and token storage
+- **Environment Variables**: Secure configuration management
  
 ## 📱 Mobile-First Design
 
@@ -42,9 +47,11 @@ The application is built with mobile users in mind, featuring:
 - **Styling**: Tailwind CSS
 - **Routing**: React Router DOM
 - **Icons**: React Icons (Feather Icons)
+- **HTTP Client**: Axios
 - **Package Manager**: npm
 - **State Management**: React Context API
 - **Form Handling**: Controlled components with validation
+- **Environment**: Vite environment variables
 
 ## 📁 Project Structure
 
@@ -55,23 +62,33 @@ Frontend/
 ├── src/
 │   ├── assets/
 │   │   └── react.svg
+│   ├── components/
+│   │   ├── Loader.jsx              # Loading spinner component
+│   │   └── PageLoader.jsx          # Full-page loading component
 │   ├── context/
-│   │   └── UserContext.jsx          # Global user state management
+│   │   ├── UserContext.jsx         # Global user state management
+│   │   └── CaptionContext.jsx      # Global caption state management
 │   ├── pages/
-│   │   ├── Home.jsx                 # Landing page with background image
-│   │   ├── UserLogin.jsx            # User authentication form
-│   │   ├── UserSignUp.jsx           # User registration form
-│   │   ├── CaptionLogin.jsx         # Caption/driver login
-│   │   └── CaptionSignUp.jsx        # Caption/driver registration
-│   ├── App.jsx                      # Main application component
-│   ├── App.css                      # Application styles
-│   ├── index.css                    # Global styles and mobile optimizations
-│   └── main.jsx                     # Application entry point
-├── package.json                     # Dependencies and scripts
-├── vite.config.js                   # Vite configuration
-├── tailwind.config.js               # Tailwind CSS configuration
-├── postcss.config.js                # PostCSS configuration
-└── eslint.config.js                 # ESLint configuration
+│   │   ├── Start.jsx               # Landing page with background image
+│   │   ├── Home.jsx                # User dashboard/home page
+│   │   ├── UserLogin.jsx           # User authentication form
+│   │   ├── UserSignUp.jsx          # User registration form
+│   │   ├── UserLogout.jsx          # User logout handler
+│   │   ├── UserProtectWrapper.jsx  # User route protection
+│   │   ├── CaptionLogin.jsx        # Caption/driver login
+│   │   ├── CaptionSignUp.jsx       # Caption/driver registration
+│   │   ├── CaptionLogout.jsx       # Caption logout handler
+│   │   ├── CaptionProtectWrapper.jsx # Caption route protection
+│   │   └── CaptionHome.jsx         # Caption dashboard/home page
+│   ├── App.jsx                     # Main application component with routing
+│   ├── App.css                     # Application styles
+│   ├── index.css                   # Global styles and mobile optimizations
+│   └── main.jsx                    # Application entry point
+├── package.json                    # Dependencies and scripts
+├── vite.config.js                  # Vite configuration
+├── tailwind.config.js              # Tailwind CSS configuration
+├── postcss.config.js               # PostCSS configuration
+└── eslint.config.js                # ESLint configuration
 ```
 
 ## 🚀 Getting Started
@@ -84,10 +101,7 @@ Frontend/
 
 1. **Clone the repository**
    ```bash
-   git clone 
-   
-   https://github.com/RishabhTomar9/Uber-Clone.git
-
+   git clone https://github.com/RishabhTomar9/Uber-Clone.git
    cd Uber-Clone/Frontend
    ```
 
@@ -96,12 +110,18 @@ Frontend/
    npm install
    ```
 
-3. **Start the development server**
+3. **Set up environment variables**
+   Create a `.env` file in the Frontend directory:
+   ```env
+   VITE_BASE_URL=http://localhost:4000
+   ```
+
+4. **Start the development server**
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**
+5. **Open your browser**
    Navigate to `http://localhost:5173` to view the application
 
 ### Available Scripts
@@ -120,6 +140,7 @@ Frontend/
 - **Background**: Gray-50 (#f9fafb) - Page backgrounds
 - **Error**: Red (#ef4444) - Validation errors and warnings
 - **Success**: Green (#10b981) - Success states
+- **Caption Theme**: Green variations - Caption-specific elements
 
 ### Typography
 - **Font Family**: System fonts (San Francisco, Segoe UI, Roboto)
@@ -133,6 +154,7 @@ Frontend/
 #### Buttons
 - **Primary**: Black background with white text
 - **Secondary**: White background with black text
+- **Caption**: Green gradient for caption-specific actions
 - **Interactive**: Hover and active states with animations
 - **Touch-Friendly**: 44px minimum height
 - **Animated**: Forward arrow animations on hover/click
@@ -198,13 +220,20 @@ Frontend/
 
 ## 🌐 Routing
 
-The application uses React Router for navigation:
+The application uses React Router for navigation with protected routes:
 
-- `/` - Home page (landing)
+### Public Routes
+- `/` - Start page (landing)
 - `/login` - User login
 - `/signup` - User registration
 - `/caption-login` - Caption/driver login
 - `/caption-signup` - Caption/driver registration
+
+### Protected Routes
+- `/home` - User dashboard (protected by UserProtectWrapper)
+- `/user/logout` - User logout (protected by UserProtectWrapper)
+- `/caption/home` - Caption dashboard (protected by CaptionProtectWrapper)
+- `/caption/logout` - Caption logout (protected by CaptionProtectWrapper)
 
 ## 🎯 Key Features
 
@@ -214,6 +243,7 @@ The application uses React Router for navigation:
 3. **Password Security**: Toggle password visibility
 4. **Responsive Design**: Works on all device sizes
 5. **Context Integration**: Global state management
+6. **Token Management**: Secure token storage and handling
 
 ### UI/UX Highlights
 - **Smooth Animations**: Forward arrow animations on buttons
@@ -221,6 +251,7 @@ The application uses React Router for navigation:
 - **Background Images**: High-quality hero images
 - **Interactive Elements**: Hover and active states
 - **Loading States**: Visual feedback during operations
+- **Page Transitions**: Smooth loading animations
 
 ## 🔒 Security Considerations
 
@@ -230,6 +261,7 @@ The application uses React Router for navigation:
 - **CSRF Protection**: Form submission security
 - **Data Encryption**: Secure data transmission
 - **Session Management**: Proper user session handling
+- **Token Storage**: Secure localStorage token management
 
 ## 📈 Performance
 
@@ -246,14 +278,44 @@ The application uses React Router for navigation:
 ```javascript
 {
   user: {
-    firstName: string,
-    lastName: string,
+    fullName: {
+      firstName: string,
+      lastName: string
+    },
     email: string,
-    password: string,
-    role: 'user' | 'caption'
+    phone: string,
+    createdAt: string
   },
   isAuthenticated: boolean,
   login: function(userData),
+  logout: function(),
+  checkAuthStatus: function()
+}
+```
+
+### Caption Context Structure
+```javascript
+{
+  caption: {
+    fullName: {
+      firstName: string,
+      lastName: string
+    },
+    email: string,
+    phone: string,
+    vehicle: {
+      color: string,
+      plate: string,
+      capacity: number,
+      vehicleType: string
+    },
+    location: {
+      lat: number,
+      lng: number
+    }
+  },
+  isAuthenticated: boolean,
+  login: function(captionData),
   logout: function(),
   checkAuthStatus: function()
 }
@@ -263,11 +325,14 @@ The application uses React Router for navigation:
 ```javascript
 // User Registration
 {
-  firstName: string,
-  lastName: string,
-  email: string,
+  fullName: {
+    firstName: string,
+    lastName: string
+  },
+  emailAddress: string,
   password: string,
-  confirmPassword: string
+  confirmPassword: string,
+  phone: string
 }
 
 // User Login
@@ -276,11 +341,31 @@ The application uses React Router for navigation:
   password: string
 }
 
-// Caption Registration/Login
+// Caption Registration
 {
+  fullName: {
+    firstName: string,
+    lastName: string
+  },
   email: string,
   password: string,
-  role: 'caption'
+  phone: string,
+  vehicle: {
+    color: string,
+    plate: string,
+    capacity: number,
+    vehicleType: string
+  },
+  location: {
+    lat: number,
+    lng: number
+  }
+}
+
+// Caption Login
+{
+  email: string,
+  password: string
 }
 ```
 
@@ -289,19 +374,24 @@ The application uses React Router for navigation:
 ### Backend Endpoints
 - `POST /api/users/register` - User registration
 - `POST /api/users/login` - User login
+- `GET /api/users/logout` - User logout
+- `GET /api/users/profile` - Get user profile
 - `POST /api/captions/register` - Caption registration
 - `POST /api/captions/login` - Caption login
-- `GET /api/users/profile` - Get user profile
-- `PUT /api/users/profile` - Update user profile
+- `GET /api/captions/logout` - Caption logout
+- `GET /api/captions/profile` - Get caption profile
 
 ### Request/Response Formats
 ```javascript
 // Registration Request
 {
-  firstName: string,
-  lastName: string,
+  fullName: {
+    firstName: string,
+    lastName: string
+  },
   email: string,
-  password: string
+  password: string,
+  phone: string
 }
 
 // Login Request
@@ -314,42 +404,134 @@ The application uses React Router for navigation:
 {
   success: boolean,
   message: string,
-  data: object,
+  user/caption: object,
   token: string
 }
 ```
 
 ## 🎨 Component Documentation
 
-### Home Component
+### Start Component (`Start.jsx`)
 - **Purpose**: Landing page with call-to-action
-- **Features**: Background image, logo, navigation
+- **Features**: Background image, logo, navigation to login
 - **Props**: None
-- **State**: None
+- **State**: isLoading
+- **Key Features**: Page loading animation, responsive design
 
-### UserLogin Component
+### Home Component (`Home.jsx`)
+- **Purpose**: User dashboard after successful login
+- **Features**: User profile display, logout functionality
+- **Props**: None
+- **State**: isPageLoading
+- **Context**: Uses UserContext for user data
+- **Key Features**: Background image, user information display
+
+### UserLogin Component (`UserLogin.jsx`)
 - **Purpose**: User authentication form
 - **Features**: Email/password fields, validation, context integration
 - **Props**: None
-- **State**: email, password, showPassword, userData
+- **State**: email, password, showPassword, isLoading, isPageLoading
+- **Context**: Uses UserContext for login
+- **Key Features**: Password toggle, form validation, loading states
 
-### UserSignUp Component
+### UserSignUp Component (`UserSignUp.jsx`)
 - **Purpose**: User registration form
-- **Features**: Full name, email, password, confirm password
+- **Features**: Full name, email, password, confirm password, phone
 - **Props**: None
-- **State**: firstName, lastName, email, password, confirmPassword, showPassword, showConfirmPassword
+- **State**: firstName, lastName, email, password, confirmPassword, phone, showPassword, showConfirmPassword, isLoading, isPageLoading
+- **Context**: Uses UserContext for registration
+- **Key Features**: Comprehensive form validation, phone number formatting
 
-### CaptionLogin Component
+### UserLogout Component (`UserLogout.jsx`)
+- **Purpose**: Handle user logout process
+- **Features**: API logout call, token removal, navigation
+- **Props**: None
+- **State**: isLoggingOut
+- **Key Features**: Loading animation, error handling
+
+### UserProtectWrapper Component (`UserProtectWrapper.jsx`)
+- **Purpose**: Protect user routes from unauthorized access
+- **Features**: Token validation, navigation control
+- **Props**: children
+- **State**: isCheckingAuth
+- **Key Features**: Route protection, loading states
+
+### CaptionLogin Component (`CaptionLogin.jsx`)
 - **Purpose**: Caption/driver authentication
 - **Features**: Email/password fields, role-specific validation
 - **Props**: None
-- **State**: email, password, showPassword, userData
+- **State**: email, password, showPassword, isLoading, isPageLoading
+- **Context**: Uses CaptionContext for login
+- **Key Features**: Green theme, caption-specific styling
 
-### CaptionSignUp Component
+### CaptionSignUp Component (`CaptionSignUp.jsx`)
 - **Purpose**: Caption/driver registration
-- **Features**: Email, password, confirm password, role assignment
+- **Features**: Personal info, vehicle details, location, password
 - **Props**: None
-- **State**: email, password, confirmPassword, showPassword, showConfirmPassword
+- **State**: Multiple form fields, location states, loading states
+- **Context**: Uses CaptionContext for registration
+- **Key Features**: GPS integration, vehicle management, comprehensive validation
+
+### CaptionLogout Component (`CaptionLogout.jsx`)
+- **Purpose**: Handle caption logout process
+- **Features**: API logout call, token removal, navigation
+- **Props**: None
+- **State**: isLoggingOut
+- **Key Features**: Loading animation, error handling
+
+### CaptionProtectWrapper Component (`CaptionProtectWrapper.jsx`)
+- **Purpose**: Protect caption routes from unauthorized access
+- **Features**: Token validation, profile fetching, navigation control
+- **Props**: children
+- **State**: isLoading
+- **Context**: Uses CaptionContext
+- **Key Features**: Route protection, profile loading
+
+### CaptionHome Component (`CaptionHome.jsx`)
+- **Purpose**: Caption dashboard after successful login
+- **Features**: Welcome message, logout functionality
+- **Props**: None
+- **State**: isPageLoading
+- **Key Features**: Background image, caption-specific styling
+
+### App Component (`App.jsx`)
+- **Purpose**: Main application component with routing
+- **Features**: Route definitions, context providers
+- **Props**: None
+- **State**: None
+- **Context**: Provides UserProvider
+- **Key Features**: Protected routes, responsive container
+
+### Loader Component (`Loader.jsx`)
+- **Purpose**: Reusable loading spinner component
+- **Features**: Configurable size, text, and styling
+- **Props**: 
+  - `size`: 'sm' | 'md' | 'lg' | 'xl' (default: 'md')
+  - `text`: string (default: 'Loading...')
+  - `className`: string (default: '')
+- **State**: None
+- **Key Features**: 
+  - Multiple size options with responsive classes
+  - Animated spinning icon using Feather Icons
+  - Optional text with pulse animation
+  - Customizable styling through className prop
+  - Centered layout with flexbox
+
+### PageLoader Component (`PageLoader.jsx`)
+- **Purpose**: Full-screen page loading overlay
+- **Features**: Uber branding, backdrop blur, professional loading experience
+- **Props**: 
+  - `text`: string (default: 'Loading...')
+  - `show`: boolean (default: false)
+- **State**: None
+- **Dependencies**: Uses Loader component
+- **Key Features**: 
+  - Full-screen overlay with fixed positioning
+  - Uber logo display for brand consistency
+  - Glass morphism effect with backdrop blur
+  - Responsive design with mobile optimization
+  - Conditional rendering based on show prop
+  - Professional loading animation with ring effect
 
 ## 🧪 Testing
 
@@ -380,7 +562,7 @@ npm run build
 
 ### Environment Variables
 ```env
-VITE_API_URL=http://localhost:3000/api
+VITE_BASE_URL=http://localhost:3000/api
 VITE_APP_NAME=Uber Clone
 VITE_APP_VERSION=1.0.0
 ```
@@ -418,6 +600,7 @@ VITE_APP_VERSION=1.0.0
 2. **Form validation errors**: Check input field requirements
 3. **Mobile styling issues**: Verify responsive breakpoints
 4. **Build errors**: Check for missing dependencies
+5. **API connection issues**: Verify VITE_BASE_URL environment variable
 
 ### Debug Tools
 - React Developer Tools
@@ -455,11 +638,15 @@ For support and questions:
 
 ### v1.0.0 (Current)
 - Initial release
-- User authentication system
+- Dual authentication system (User & Caption)
 - Mobile-first design
 - Context API integration
 - Form validation
 - Responsive layout
+- Protected routes
+- Location services
+- Vehicle management
+- Loading animations
 
 ### Planned Features
 - Real-time location tracking
@@ -467,6 +654,9 @@ For support and questions:
 - Push notifications
 - Offline support
 - Advanced analytics
+- Ride booking system
+- Driver-passenger matching
+- Real-time chat
 
 ---
 

@@ -16,7 +16,7 @@ import CaptionHome from './pages/CaptionHome'
 function App() {
   return (
     <UserProvider>
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen">
         <div className="w-full max-w-[27rem] mx-auto">
           <Routes>
             <Route path="/" element={<Start />} />

@@ -134,7 +134,7 @@ const UserSignUp = () => {
                   </div>
                   
                   {/* Name Fields */}
-                  <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                  <div className='grid grid-cols-2 gap-4 items-center justify-center'>
                     <div className='space-y-2'>
                       <label htmlFor='firstName' className='block text-sm font-medium text-white/90'>
                         First Name
@@ -142,7 +142,7 @@ const UserSignUp = () => {
                       <input 
                         id='firstName'
                         type="text" 
-                        placeholder='Enter your first name' 
+                        placeholder='First name' 
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
@@ -158,7 +158,7 @@ const UserSignUp = () => {
                       <input 
                         id='lastName'
                         type="text" 
-                        placeholder='Enter your last name' 
+                        placeholder='Last name' 
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'

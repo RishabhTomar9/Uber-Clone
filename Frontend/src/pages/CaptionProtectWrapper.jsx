@@ -1,39 +1,45 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import Loader from '../components/Loader';
+import { useCaption } from '../context/CaptionContext';
+import axios from 'axios';
 
 const CaptionProtectWrapper = ({children}) => {
     const token = localStorage.getItem('captionToken');
     const navigate = useNavigate();
-    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+    const {caption, setCaption} = useCaption();
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const checkAuth = () => {
             if (!token) {
                 navigate('/caption-login');
             } else {
-                setIsCheckingAuth(false);
+                setIsLoading(false);
             }
         };
-
-        // Simulate auth check time
-        // const timer = setTimeout(() => {
-        //     checkAuth();
-        // }, 500);
-
-        // return () => clearTimeout(timer);
+        checkAuth();
     }, [token, navigate]);
 
-    // if (isCheckingAuth) {
-    //     return (
-    //         <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-zinc-800 to-black">
-    //             <div className="text-center">
-    //                 <h1 className="text-2xl font-bold mb-4 text-white">Checking authentication...</h1>
-    //                 <Loader size="lg" text="Please wait" />
-    //             </div>
-    //         </div>
-    //     );
-    // }
+    useEffect(() => {
+        if (!token) return;
+        axios.get(`${import.meta.env.VITE_BASE_URL}/captions/profile`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).then(response => {
+            if (response.status === 200) {
+                setCaption(response.data.caption);
+                setIsLoading(false);
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            localStorage.removeItem('captionToken');
+            navigate('/caption-login');
+        });
+    }, [token, setCaption, navigate]);
+
+    if (isLoading) return <div>Loading...</div>;
 
     return (
         <>
@@ -42,4 +48,4 @@ const CaptionProtectWrapper = ({children}) => {
     )
 }
 
-export default CaptionProtectWrapper
+export default CaptionProtectWrapper;
